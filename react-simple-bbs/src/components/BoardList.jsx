@@ -2,8 +2,26 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 export default function BoardList() {
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3000/list', {})
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        console.log('Request completed');
+      });
+  }, []);
+
   return (
     <>
       <Table striped bordered hover>
