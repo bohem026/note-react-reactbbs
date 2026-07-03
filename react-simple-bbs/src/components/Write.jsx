@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
 
-export default function Write({ isModifyMode, boardId }) {
+export default function Write({ isModifyMode, boardId, handleCancel }) {
   let navigate = useNavigate();
   const [content, setContent] = useState({
     name: '',
@@ -73,11 +73,10 @@ export default function Write({ isModifyMode, boardId }) {
       })
       .catch((error) => {
         console.error(error);
-        // handleCancel();
-        // navigate('/');
       })
       .finally(() => {});
   };
+
   const update = (e) => {
     e.preventDefault();
     const formData = validate(e);
@@ -88,13 +87,19 @@ export default function Write({ isModifyMode, boardId }) {
         ...formData,
         id: boardID,
       })
-      .then((response) => {
+      .then(() => {
+        handleCancel();
         navigate('/');
       })
       .catch((error) => {
         console.error(error);
       })
       .finally(() => {});
+  };
+
+  const handleClick = () => {
+    handleCancel();
+    navigate('/');
   };
 
   return (
@@ -129,7 +134,9 @@ export default function Write({ isModifyMode, boardId }) {
           <Button type="submit" variant="primary">
             입력
           </Button>
-          <Button variant="secondary">취소</Button>
+          <Button variant="secondary" onClick={handleClick}>
+            취소
+          </Button>
         </div>
       </Form>
     </>
