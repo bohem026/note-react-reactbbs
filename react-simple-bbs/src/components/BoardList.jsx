@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { useEffect, useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 
 function Board({ data, onCheckBoxChange }) {
   return (
@@ -29,7 +29,6 @@ export default function BoardList() {
   console.log('BoardList Render');
   const [list, setList] = useState([]);
   const [checkList, setCheckList] = useState([]); //[9,10]
-  let navigate = useNavigate();
 
   const getList = useCallback(() => {
     axios
