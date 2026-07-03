@@ -4,8 +4,8 @@ const app = express();
 const mysql = require('mysql2');
 const port = 3000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); //json->object
+app.use(express.json());  // json-> object
+app.use(express.urlencoded({ extended: true })); //html form ->object
 
 var corsOptions = {
   origin: '*',
@@ -37,7 +37,7 @@ app.get('/list', (req, res) => {
 app.post('/write', (req, res) => {
   console.log(req.body);
   const { name, title, content } = req.body;
-  
+
   const sqlQuery = 'insert into board (writer, title, content) values (?, ?, ?);';
   db.query(sqlQuery, [name, title, content], (err, result) => {
     if (err) throw err;
