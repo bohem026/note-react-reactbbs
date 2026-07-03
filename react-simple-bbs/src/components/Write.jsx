@@ -73,6 +73,8 @@ export default function Write({ isModifyMode, boardId }) {
       })
       .catch((error) => {
         console.error(error);
+        // handleCancel();
+        // navigate('/');
       })
       .finally(() => {});
   };
