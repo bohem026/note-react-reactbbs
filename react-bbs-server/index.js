@@ -58,12 +58,12 @@ app.get('/view', (req, res) => {
 
 app.post('/write', upload.single('image'), (req, res) => {
   console.log(req.body);
-  const { name, title, content } = req.body;
+  const { writer, title, content } = req.body;
   // const imagePath = req.file?.path;
   const imagePath = req.file ? req.file.path : null; // req.file.path는 업로드된 파일의 경로
 
   const sqlQuery = 'insert into board (writer, title, content, image_path) values (?, ?, ?, ?);';
-  db.query(sqlQuery, [name, title, content, imagePath], (err, result) => {
+  db.query(sqlQuery, [writer, title, content, imagePath], (err, result) => {
     if (err) throw err;
     res.send(result);
   });
