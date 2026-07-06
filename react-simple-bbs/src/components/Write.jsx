@@ -13,22 +13,22 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
     image: null,
   });
 
-  const [removeImage, setRemoveImage] = useState(false); // 기존 이미지 삭제 여부
+  const [removeImage, setRemoveImage] = useState(false); //기존이미지 삭제 여부
 
   useEffect(() => {
     if (isModifyMode && boardId) {
-      // boardId로 서버에 글 조회, 조회 결과로 content 업데이트
+      //boardId로 서버에 글 조회, 조회결과로 content 업데이트
       axios
         .get(`http://localhost:3000/view?id=${boardId}`)
         .then((response) => {
           console.log(response.data); //[{..}]
-          // setContent(response.data);
-
-          // data가 없거나 data의 배열의 개수가 0과 같다면
+          //setContent(response.data);
+          //data가 없거나 data의 배열의 개수가 0가 같다면
           if (!response.data || response.data.length === 0) {
             setIsError(true);
             return;
           }
+
           const data = response.data[0];
 
           setContent({
@@ -36,8 +36,8 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
             title: data.title,
             content: data.content,
             date: data.date,
-            image_path: data.image_path || '', // 기존 이미지
-            image: null, // 새 이미지
+            image_path: data.image_path || '', //기존 이미지
+            image: null, //새 이미지
           });
         })
         .catch((error) => {
@@ -66,21 +66,23 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
     };
   };
 
-  const createFormData = (validatedData) => {
+  const createFormData = (validatedData, id) => {
     const formData = new FormData();
     formData.append('writer', validatedData.name);
     formData.append('title', validatedData.title);
     formData.append('content', validatedData.content);
 
+    if (id) {
+      formData.append('id', id);
+    }
     if (content.image) {
-      // 새 이미지
+      //새 이미지
       formData.append('image', content.image);
     }
     if (removeImage) {
-      // 기존 이미지 지운다 true
+      //기존 이미지 지운다 true
       formData.append('remove_image', '1');
     }
-
     return formData;
   };
 
@@ -90,7 +92,9 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
     if (!validatedData) return;
 
     const formData = createFormData(validatedData);
-
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
     axios
       .post('http://localhost:3000/write', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -103,25 +107,22 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
       })
       .finally(() => {});
   };
-
   const update = (e) => {
     e.preventDefault();
     const validatedData = validate(e);
+    console.log(validatedData);
+
     if (!validatedData) return;
 
-    const formData = createFormData(validatedData);
+    const formData = createFormData(validatedData, boardId);
 
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
     axios
-      .post(
-        'http://localhost:3000/update',
-        {
-          ...formData,
-          id: boardId,
-        },
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        },
-      )
+      .post('http://localhost:3000/update', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
       .then(() => {
         handleCancel();
         navigate('/');
@@ -144,10 +145,9 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
       image: file,
     }));
   };
-
   return (
     <>
-      <h2 className="mb-3">{isModifyMode ? '글 수정' : '글 쓰기'}</h2>
+      <h2 className="mb-3">{isModifyMode ? '글수정' : '글쓰기'}</h2>
       <Form onSubmit={isModifyMode ? update : write}>
         <Form.Group className="mb-3" controlId="name">
           <Form.Label>글쓴이</Form.Label>
@@ -186,8 +186,11 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
             />
             <Form.Check // prettier-ignore
               type="checkbox"
-              id="default-check"
-              label="기존 이미지 제거"
+              id={`default-check`}
+              label="기존이미지 제거"
+              onChange={(e) => {
+                setRemoveImage(e.target.checked);
+              }}
             />
           </div>
         )}
