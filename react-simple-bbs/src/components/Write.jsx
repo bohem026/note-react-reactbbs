@@ -119,6 +119,7 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
     for (const [key, value] of formData.entries()) {
       console.log(key, value);
     }
+
     axios
       .post('http://localhost:3000/update', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
